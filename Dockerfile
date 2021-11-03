@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1.3-labs
-FROM bitnami/elasticsearch:7.14.2-debian-10-r1
+ARG es_version
+FROM bitnami/elasticsearch:${es_version}
 
 USER 0
 
