@@ -11,7 +11,7 @@ COPY build.sh .
 
 RUN <<EOF
 chmod +x build.sh
-es_version=7.14.2 ./build.sh
+es_version=$(echo $BITNAMI_IMAGE_VERSION | grep -oE '^[^-]+') ./build.sh
 EOF
 
 RUN rm -rf /build
