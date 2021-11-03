@@ -1,20 +1,35 @@
 # Try to build ES with bypass license
 
-## How to build
+## Quickstart
 
-1. Pull this repo
-
-   ```git pull https://github.com/scila1996/es-rebuild.git```
+   ```
+   git pull https://github.com/scila1996/es-rebuild.git
+   docker build .
+   ```
    
-2. Edit image version in Dockerfile.
+## Build from Server/VM
 
-   > vim Dockerfile
-   
-   replace value in `FROM` instruction
-   
-3. Ok . Let run to build
+Just run and specify version to `es_version` environment variable
 
-   ```docker build .```
+   ```
+   chmod +x build.sh
+   es_version=7.14.2 ./build.sh 
+   ```
+
+
+## Build from Docker image
+
+Edit image version in Dockerfile. replace value in `FROM` instruction
+
+   ```
+   vim Dockerfile
+   ```
+
+Ok . Let run to build
+
+   ```
+   docker build .
+   ```
    
 ## Notes
 
