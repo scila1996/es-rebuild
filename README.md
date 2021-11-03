@@ -3,7 +3,7 @@
 ## Quickstart
 
    ```
-   git pull https://github.com/scila1996/es-rebuild.git
+   git clone https://github.com/scila1996/es-rebuild.git
    docker build .
    ```
    
