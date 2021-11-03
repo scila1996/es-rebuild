@@ -6,11 +6,11 @@
 
    ```git pull https://github.com/scila1996/es-rebuild.git```
    
-2. Edit image version and ES version in Dockerfile
+2. Edit image version in Dockerfile.
 
    > vim Dockerfile
    
-   replace `FROM` and `es_version` section
+   replace value in `FROM` instruction
    
 3. Ok . Let run to build
 
@@ -18,4 +18,5 @@
    
 ## Notes
 
-*Do not use in production*
+* Only support for image from /bitnami
+* Do not use in production
