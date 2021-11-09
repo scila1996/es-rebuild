@@ -1,8 +1,7 @@
-# syntax=docker/dockerfile:1.3-labs
+# syntax=docker/dockerfile:1.3.1-labs
 ARG es_version
-FROM bitnami/elasticsearch:${es_version}
-
-USER 0
+FROM docker.elastic.co/elasticsearch/elasticsearch:${es_version}
+ARG es_version
 
 WORKDIR /build
 
@@ -10,12 +9,13 @@ COPY LicenseVerifier.java .
 COPY XPackBuild.java .
 COPY build.sh .
 
+ENV es_version=$es_version
+
 RUN <<EOF
 chmod +x build.sh
-es_version=$(echo $BITNAMI_IMAGE_VERSION | grep -oE '^[^-]+') ./build.sh
+./build.sh
 EOF
 
 RUN rm -rf /build
 
-WORKDIR /
-USER 1001
+WORKDIR /usr/share/elasticsearch
