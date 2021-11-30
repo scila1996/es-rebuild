@@ -27,5 +27,5 @@ Set `es_version` argument to version of docker image tag from bitnami. See here 
    
 ## Notes
 
-* Only support with image from /bitnami
+* Use for image from elastic.co
 * Do not use in production
