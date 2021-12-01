@@ -1,4 +1,4 @@
-# Try to build ES with bypass license
+# Try to build ES with x-pack bypass
 
 ## Quickstart
 
