@@ -3,7 +3,7 @@
 ## Quickstart
 
    ```
-   git clone https://github.com/scila1996/es-rebuild.git
+   git clone --single-branch --branch https://github.com/scila1996/es-rebuild.git
    docker build --build-arg es_version=7.15.2-debian-10-r0 .
    ```
    
