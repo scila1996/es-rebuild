@@ -71,11 +71,8 @@ public class LicenseVerifier {
 JAVA_FILE
 )
 
-# echo $f_x_pack_build | base64 --decode > XPackBuild.java
-# echo $f_x_pack_license_verify | base64 --decode > LicenseVerifier.java
-
-echo "$f_x_pack_build" > XPackBuild.java
-echo "$f_x_pack_license_verify" > LicenseVerifier.java
+cat <<<"$f_x_pack_build" > XPackBuild.java
+cat <<<"$f_x_pack_license_verify" > LicenseVerifier.java
 
 find /opt/bitnami/elasticsearch -type f \( -name "elasticsearch-$es_version.jar" -o -name "elasticsearch-core-$es_version.jar" -o -name "$x_pack" \) 2>/dev/null > files.txt
 
