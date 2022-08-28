@@ -71,6 +71,8 @@ public class LicenseVerifier {
 JAVA_FILE
 )
 
+cd /opt/bitnami/elasticsearch/tmp
+
 cat <<<"$f_x_pack_build" > XPackBuild.java
 cat <<<"$f_x_pack_license_verify" > LicenseVerifier.java
 
