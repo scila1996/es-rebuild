@@ -76,10 +76,12 @@ cat <<<"$f_x_pack_license_verify" > LicenseVerifier.java
 
 find /opt/bitnami/elasticsearch -type f \( -name "elasticsearch-$APP_VERSION.jar" -o -name "elasticsearch-core-$APP_VERSION.jar" -o -name "$x_pack" \) 2>/dev/null > files.txt
 
-cat files.txt | xargs -n1 -I {} cp {} .
+cat files.txt | grep "${x_pack}$" | xargs -n1 -I {} cp {} .
 
 javac -cp $(cat files.txt | tr '\n' ':') -d . LicenseVerifier.java XPackBuild.java
 
 jar uf "$x_pack" org
 
-cat files.txt | grep "$x_pack" | xargs -n1 cp "$x_pack"
+cat files.txt | grep "${x_pack}$" | xargs -n1 cp "$x_pack"
+
+rm -rf org XPackBuild.java LicenseVerifier.java files.txt "$x_pack"
