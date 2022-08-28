@@ -1,10 +1,10 @@
 #!/bin/bash
 
-es_version="${es_version:-0.0.0}"
+APP_VERSION="${APP_VERSION:-0.0.0}"
 
-[ "$es_version" = "0.0.0" ] && echo \$es_version is not set && exit 1
+[ "$APP_VERSION" = "0.0.0" ] && echo \$APP_VERSION is not set && exit 1
 
-x_pack="x-pack-core-$es_version.jar"
+x_pack="x-pack-core-$APP_VERSION.jar"
 
 f_x_pack_build=$(cat <<'JAVA_FILE'
 package org.elasticsearch.xpack.core;
@@ -74,7 +74,7 @@ JAVA_FILE
 cat <<<"$f_x_pack_build" > XPackBuild.java
 cat <<<"$f_x_pack_license_verify" > LicenseVerifier.java
 
-find /opt/bitnami/elasticsearch -type f \( -name "elasticsearch-$es_version.jar" -o -name "elasticsearch-core-$es_version.jar" -o -name "$x_pack" \) 2>/dev/null > files.txt
+find /opt/bitnami/elasticsearch -type f \( -name "elasticsearch-$APP_VERSION.jar" -o -name "elasticsearch-core-$APP_VERSION.jar" -o -name "$x_pack" \) 2>/dev/null > files.txt
 
 cat files.txt | xargs -n1 -I {} cp {} .
 
