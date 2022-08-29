@@ -1,3 +1,5 @@
+#!/bin/bash
+
 APP_VERSION="${APP_VERSION:-0.0.0}"
 
 [ "$APP_VERSION" = "0.0.0" ] && echo \$APP_VERSION is not set && exit 1
