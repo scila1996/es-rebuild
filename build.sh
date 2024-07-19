@@ -6,77 +6,19 @@ APP_VERSION="${APP_VERSION:-0.0.0}"
 
 x_pack="x-pack-core-$APP_VERSION.jar"
 
-f_x_pack_build=$(cat <<'JAVA_FILE'
-package org.elasticsearch.xpack.core;
-
-import org.elasticsearch.core.PathUtils;
-import org.elasticsearch.core.SuppressForbidden;
-
-import org.elasticsearch.common.io.*;
-import java.net.*;
-import org.elasticsearch.common.*;
-import java.nio.file.*;
-import java.io.*;
-import java.util.jar.*;
-
-public class XPackBuild {
-    public static final XPackBuild CURRENT;
-    private String shortHash;
-    private String date;
-    @SuppressForbidden(reason = "looks up path of xpack.jar directly")
-    static Path getElasticsearchCodebase() {
-        final URL url = XPackBuild.class.getProtectionDomain().getCodeSource().getLocation();
-        try { return PathUtils.get(url.toURI()); }
-        catch (URISyntaxException bogus) {
-        throw new RuntimeException(bogus); }
-    }
-
-    XPackBuild(final String shortHash, final String date) {
-        this.shortHash = shortHash;
-        this.date = date;
-    }
-
-    public String shortHash() {
-        return this.shortHash;
-    }
-    public String date(){
-        return this.date;
-    }
-
-    static {
-        final Path path = getElasticsearchCodebase();
-        String shortHash = null;
-        String date = null;
-        Label_0157: { shortHash = "Unknown"; date = "Unknown";
-    }
-
-    CURRENT = new XPackBuild(shortHash, date);
-    }
-}
-JAVA_FILE
-)
-
-f_x_pack_license_verify=$(cat <<'JAVA_FILE'
-package org.elasticsearch.license;
-
-public class LicenseVerifier {
-    public static boolean verifyLicense(final License license, final byte[] encryptedPublicKeyData) {
-        return true;
-    }
-
-    public static boolean verifyLicense(final License license) {
-        return true;
-    }
-}
-JAVA_FILE
-)
-
 cd /opt/bitnami/elasticsearch/tmp
 
-cat <<<"$f_x_pack_build" > XPackBuild.java
-cat <<<"$f_x_pack_license_verify" > LicenseVerifier.java
+curl -o LicenseVerifier.java -s https://raw.githubusercontent.com/elastic/elasticsearch/v${APP_VERSION}/x-pack/plugin/core/src/main/java/org/elasticsearch/license/LicenseVerifier.java
+curl -o XPackBuild.java -s https://raw.githubusercontent.com/elastic/elasticsearch/${APP_VERSION}/x-pack/plugin/core/src/main/java/org/elasticsearch/xpack/core/XPackBuild.java
 
-find /opt/bitnami/elasticsearch -type f \( -name "elasticsearch-$APP_VERSION.jar" -o -name "elasticsearch-core-$APP_VERSION.jar" -o -name "$x_pack" \) 2>/dev/null > files.txt
+# Edit LicenseVerifier.java
+sed -i '/boolean verifyLicense(/{h;s/verifyLicense/verifyLicense2/;x;G}' LicenseVerifier.java
+sed -i '/boolean verifyLicense(/ s/$/return true;}/' LicenseVerifier.java
+
+# Edit XPackBuild.java
+sed -i 's/path.toString().endsWith(".jar")/false/g' XPackBuild.java
+
+find /opt/bitnami/elasticsearch -type f \( -name "elasticsearch-$APP_VERSION.jar" -o -name "elasticsearch-core-$APP_VERSION.jar" -o -name "$x_pack" \) 2>/dev/null >files.txt
 
 cat files.txt | grep "${x_pack}$" | xargs -n1 -I {} cp {} .
 
