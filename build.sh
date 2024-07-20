@@ -1,13 +1,13 @@
 #!/bin/bash
 
+ELASTICSEARCH_INSTALLATION_DIRECTORY="${ELASTICSEARCH_INSTALLATION_DIRECTORY:-/opt/bitnami/elasticsearch}"
 APP_VERSION="${APP_VERSION:-0.0.0}"
 
-[ "$APP_VERSION" = "0.0.0" ] && echo \$APP_VERSION is not set && exit 1
+[ "${APP_VERSION}" = "0.0.0" ] && echo \$APP_VERSION is not set && exit 1
 
-x_pack="x-pack-core-$APP_VERSION.jar"
+X_PACK_CORE_FILE="${ELASTICSEARCH_INSTALLATION_DIRECTORY}/modules/x-pack-core/x-pack-core-${APP_VERSION}.jar"
 
-cd /opt/bitnami/elasticsearch/tmp
-
+# Download script
 curl -o LicenseVerifier.java -s https://raw.githubusercontent.com/elastic/elasticsearch/v${APP_VERSION}/x-pack/plugin/core/src/main/java/org/elasticsearch/license/LicenseVerifier.java
 curl -o XPackBuild.java -s https://raw.githubusercontent.com/elastic/elasticsearch/v${APP_VERSION}/x-pack/plugin/core/src/main/java/org/elasticsearch/xpack/core/XPackBuild.java
 
@@ -18,14 +18,17 @@ sed -i '/boolean verifyLicense(/ s/$/return true;}/' LicenseVerifier.java
 # Edit XPackBuild.java
 sed -i 's/path.toString().endsWith(".jar")/false/g' XPackBuild.java
 
-find /opt/bitnami/elasticsearch -type f \( -name "elasticsearch-$APP_VERSION.jar" -o -name "elasticsearch-core-$APP_VERSION.jar" -o -name "$x_pack" \) 2>/dev/null >files.txt
+# Build class file
+javac -cp "${ELASTICSEARCH_INSTALLATION_DIRECTORY}/lib/*:${ELASTICSEARCH_INSTALLATION_DIRECTORY}/modules/x-pack-core/*" -d . LicenseVerifier.java
+javac -cp "${ELASTICSEARCH_INSTALLATION_DIRECTORY}/lib/*:${ELASTICSEARCH_INSTALLATION_DIRECTORY}/modules/x-pack-core/*" -d . XPackBuild.java
 
-cat files.txt | grep "${x_pack}$" | xargs -n1 -I {} cp {} .
+# Backup x-pack-core file
+cp "${X_PACK_CORE_FILE}" "${X_PACK_CORE_FILE}.bak"
 
-javac -cp $(cat files.txt | tr '\n' ':') -d . LicenseVerifier.java XPackBuild.java
+# Patch x-pack-core file
+jar uf "${X_PACK_CORE_FILE}" org
 
-jar uf "$x_pack" org
-
-cat files.txt | grep "${x_pack}$" | xargs -n1 cp "$x_pack"
-
-rm -rf org XPackBuild.java LicenseVerifier.java files.txt "$x_pack"
+# Clean-up
+rm -rf org
+rm -f XPackBuild.java LicenseVerifier.java
+rm -f XPackBuild.class LicenseVerifier.class
