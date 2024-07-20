@@ -9,7 +9,7 @@ x_pack="x-pack-core-$APP_VERSION.jar"
 cd /opt/bitnami/elasticsearch/tmp
 
 curl -o LicenseVerifier.java -s https://raw.githubusercontent.com/elastic/elasticsearch/v${APP_VERSION}/x-pack/plugin/core/src/main/java/org/elasticsearch/license/LicenseVerifier.java
-curl -o XPackBuild.java -s https://raw.githubusercontent.com/elastic/elasticsearch/${APP_VERSION}/x-pack/plugin/core/src/main/java/org/elasticsearch/xpack/core/XPackBuild.java
+curl -o XPackBuild.java -s https://raw.githubusercontent.com/elastic/elasticsearch/v${APP_VERSION}/x-pack/plugin/core/src/main/java/org/elasticsearch/xpack/core/XPackBuild.java
 
 # Edit LicenseVerifier.java
 sed -i '/boolean verifyLicense(/{h;s/verifyLicense/verifyLicense2/;x;G}' LicenseVerifier.java
